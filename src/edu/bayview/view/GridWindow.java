@@ -1,29 +1,25 @@
 package edu.bayview.view;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-/*
- * The class to create the window to display the game
- */
-public class Window extends JFrame {
+public class GridWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
 	private JLabel statusbar;
 
-    public Window() {
-        initUI();
+    public GridWindow() {
+    	initialize();
     }
 
-    private void initUI() {
+    private void initialize() {
         statusbar = new JLabel("");
         add(statusbar, BorderLayout.SOUTH);
 
-        add(new Board(statusbar));
+        add(new GridBoard());
         this.setVisible(true);
         setResizable(false);
         pack();

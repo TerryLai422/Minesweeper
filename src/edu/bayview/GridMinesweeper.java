@@ -5,12 +5,12 @@ import java.awt.EventQueue;
 import edu.bayview.view.GridWindow;
 import edu.bayview.view.Window;
 
-public class Minesweeper {
+public class GridMinesweeper {
 
 	public static void main(String[] args) {
 
 		EventQueue.invokeLater(() -> {
-			Window window = new Window();
+			GridWindow window = new GridWindow();
 			window.setVisible(true);
 		});
 	}
