@@ -1,24 +1,18 @@
 package edu.bayview.view;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 
 
 public class GridBoard extends JPanel {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public GridBoard() {
 		initialize();
@@ -33,7 +27,6 @@ public class GridBoard extends JPanel {
                 public void mouseClicked(MouseEvent e) {
                     int x = tileNumber % 9; // Calculate the x position
                     int y = tileNumber / 9; // Calculate the y position
-
                     if (e.getButton() == MouseEvent.BUTTON1) {
                         System.out.println("Left button clicked on tile (" + x + ", " + y + ")");
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -45,7 +38,7 @@ public class GridBoard extends JPanel {
             // Set the preferred size for the tile
             Dimension tileSize = new Dimension(50, 50);
             label.setPreferredSize(tileSize);
-			ImageIcon imageIcon = new ImageIcon("src/resources/0.png");
+			ImageIcon imageIcon = new ImageIcon("src/resources/10.png");
 
 			Image image = imageIcon.getImage();
 
@@ -56,8 +49,8 @@ public class GridBoard extends JPanel {
 			// Set the scaled image icon
 			label.setIcon(scaledIcon);
             // Create and set the border for the tile
-            Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
-            label.setBorder(border);
+//            Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
+//            label.setBorder(border);
 
             add(label);
         }

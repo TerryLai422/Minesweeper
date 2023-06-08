@@ -2,7 +2,6 @@ package edu.bayview;
 
 import java.awt.EventQueue;
 
-import edu.bayview.view.GridWindow;
 import edu.bayview.view.Window;
 
 public class Minesweeper {
