@@ -2,14 +2,13 @@ package edu.bayview;
 
 import java.awt.EventQueue;
 
-import edu.bayview.view.Window;
+import edu.bayview.view.BoardView;
 
 public class Minesweeper {
 
 	public static void main(String[] args) {
-
 		EventQueue.invokeLater(() -> {
-			Window window = new Window();
+			BoardView window = new BoardView();
 			window.setVisible(true);
 		});
 	}
