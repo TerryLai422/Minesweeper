@@ -84,7 +84,8 @@ public class GameController {
 		            System.out.println("GAME OVER!");
 		        } else {
 		            // Update neighboring tiles
-//		            revealNeighborTiles(row, col);
+		        	// TODO AUDREY not working
+//		            revealNeighborTiles(row, col); 
 		        }
 		    }
 		}
