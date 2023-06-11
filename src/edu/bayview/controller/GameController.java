@@ -74,21 +74,38 @@ public class GameController {
 				}
 			}
 		}
-
 		private void revealTile(int row, int col) {
-			System.out.println("revealTile");
-			if (!gridModel.isTileRevealed(row, col)) {
-				gridModel.setTileRevealed(row, col, true);
-				if (gridModel.hasBomb(row, col)) {
-					// Handle bomb revealed
-					gridModel.setGameOver(true);
-					System.out.println("GAME OVER!");
-				} else {
-					// Update neighboring tiles
-					gridModel.revealTile(row, col);
-				}
-			}
+		    System.out.println("revealTile");
+		    if (!gridModel.isTileRevealed(row, col)) {
+		        gridModel.setTileRevealed(row, col, true);
+		        if (gridModel.hasBomb(row, col)) {
+		            // Handle bomb revealed
+		            gridModel.setGameOver(true);
+		            System.out.println("GAME OVER!");
+		        } else {
+		            // Update neighboring tiles
+//		            revealNeighborTiles(row, col);
+		        }
+		    }
 		}
+
+		private void revealNeighborTiles(int row, int col) {
+		    for (int i = Math.max(row - 1, 0); i <= Math.min(row + 1, gridView.getNumOfTile() - 1); i++) {
+		        for (int j = Math.max(col - 1, 0); j <= Math.min(col + 1, gridView.getNumOfTile() - 1); j++) {
+		            if (i != row || j != col) {
+		                if (!gridModel.hasBomb(i, j) && !gridModel.isTileRevealed(i, j)) {
+		                    revealTile(i, j);
+		                }
+		            }
+		        }
+		    }
+		}
+		
+		private boolean isValidTile(int row, int col) {
+		    int numOfTile = gridView.getNumOfTile();
+		    return row >= 0 && row < numOfTile && col >= 0 && col < numOfTile;
+		}
+
 
 		private void flagTile(int row, int col) {
 			System.out.println("flatTile");
