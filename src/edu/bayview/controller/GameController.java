@@ -3,82 +3,142 @@ package edu.bayview.controller;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import edu.bayview.model.GridModel;
+import edu.bayview.model.TileModel;
+import edu.bayview.view.BoardView;
 import edu.bayview.view.GridView;
 import edu.bayview.view.TileView;
 
 public class GameController {
-    private GridModel gridModel;
-    private GridView gridView;
+	private GridModel gridModel;
+	private GridView gridView;
+	private BoardView boardView;
 
-    public GameController(GridModel gridModel, GridView gridView) {
-        this.gridModel = gridModel;
-        this.gridView = gridView;
+	public GameController(GridModel gridModel, GridView gridView, BoardView boardView) {
+		this.gridModel = gridModel;
+		this.gridView = gridView;
+		this.boardView = boardView;
 
-        setupListeners();
-    }
+		setupListeners();
+	}
 
-    private void setupListeners() {
-        for (int row = 0; row < gridView.getNumOfTile(); row++) {
-            for (int col = 0; col < gridView.getNumOfTile(); col++) {
-                TileView tileView = gridView.getTileView(row, col);
-                tileView.addMouseListener(new TileClickListener(row, col));
-            }
-        }
-    }
+	private void setupListeners() {
+		for (int row = 0; row < this.gridView.getNumOfTile(); row++) {
+			for (int col = 0; col < this.gridView.getNumOfTile(); col++) {
+				TileView tileView = this.gridView.getTileView(row, col);
+				tileView.addMouseListener(new TileClickListener(row, col));
+			}
+		}
+	}
 
-    private class TileClickListener extends MouseAdapter {
-        private int row;
-        private int col;
+	private class TileClickListener extends MouseAdapter {
+		private int row;
+		private int col;
 
-        public TileClickListener(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
+		public TileClickListener(int row, int col) {
+			this.row = row;
+			this.col = col;
+		}
 
-        @Override
-        public void mouseClicked(MouseEvent e) {
-        	System.out.println("Click - row:" + row + ",col:" + col);
-        	System.out.println("hasBomb:" + gridModel.hasBomb(row, col));
-        	System.out.println("Revealed:" + gridModel.isTileRevealed(row, col));
-        	System.out.println("Flagged:" + gridModel.isTileFlagged(row, col));
-        	System.out.println("numBombsAround:" + gridModel.getNumBombsAround(row, col));
-            if (e.getButton() == MouseEvent.BUTTON1) {
-                // Left button clicked
-                revealTile(row, col);
-            } else if (e.getButton() == MouseEvent.BUTTON3) {
-                // Right button clicked
-                flagTile(row, col);
-            }
-        }
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (!gridModel.isGameOver()) {
+				System.out.println("Click - row:" + row + ",col:" + col);
+				System.out.println("Before Tile:" + gridModel.getTileModel(row, col).toString());
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					// Left button clicked
+					if (!gridModel.isTileFlagged(row, col)) {
+						revealTile(row, col);
+					} else {
+						System.out.println("row[" + row + "],col[" + col + "] is flagged");
+					}
+				} else if (e.getButton() == MouseEvent.BUTTON3) {
+					// Right button clicked
+					flagTile(row, col);
+				}
+				updateTileViews();
 
-        private void revealTile(int row, int col) {
-            if (!gridModel.isTileRevealed(row, col)) {
-                gridModel.setTileRevealed(row, col, true);
-                if (gridModel.hasBomb(row, col)) {
-                    // Handle bomb revealed
-                    // ...
-                	gridModel.revealTile(row, col);
-                	System.out.println("REVEALED");
-                } else {
-                    // Update neighboring tiles
-                    // ...
-                	System.out.println("ELSE REVEALED");
-                }
+				System.out.println("After Tile:" + gridModel.getTileModel(row, col).toString());
+			} else {
+				System.out.println("GAME OVER");
+				if (JOptionPane.showConfirmDialog(boardView, "Do you want to restart the game?", "Restart Game?",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					System.out.println("Restart Game");
+					gridModel.restart();
+					updateTileViews();
+				} else {
+					boardView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				}
+			}
+		}
 
-                // Update the view
-                gridView.updateTileView(row, col);
-            }
-        }
+		private void revealTile(int row, int col) {
+			System.out.println("revealTile");
+			if (!gridModel.isTileRevealed(row, col)) {
+				gridModel.setTileRevealed(row, col, true);
+				if (gridModel.hasBomb(row, col)) {
+					// Handle bomb revealed
+					gridModel.setGameOver(true);
+					System.out.println("GAME OVER!");
+				} else {
+					// Update neighboring tiles
+					gridModel.revealTile(row, col);
+				}
+			}
+		}
 
-        private void flagTile(int row, int col) {
-            if (!gridModel.isTileRevealed(row, col)) {
-                boolean currentFlagStatus = gridModel.isTileFlagged(row, col);
-                gridModel.setTileFlagged(row, col, !currentFlagStatus);
+		private void flagTile(int row, int col) {
+			System.out.println("flatTile");
+			if (!gridModel.isTileRevealed(row, col)) {
+				boolean currentFlagStatus = gridModel.isTileFlagged(row, col);
+				gridModel.setTileFlagged(row, col, !currentFlagStatus);
+			}
+		}
 
-                // Update the view
-                gridView.updateTileView(row, col);
-            }
-        }
-    }
+		private void updateTileViews() {
+			System.out.println("update tile views");
+
+			TileView[][] tileViews = gridView.getTileViews();
+			int numOfTile = gridView.getNumOfTile();
+			for (int row = 0; row < numOfTile; row++) {
+				for (int col = 0; col < numOfTile; col++) {
+					System.out.print(gridModel.getTileModels()[row][col].toString() + "|");
+				}
+				System.out.println("");
+			}
+			for (int row = 0; row < numOfTile; row++) {
+				for (int col = 0; col < numOfTile; col++) {
+					TileModel tileModel = gridModel.getTileModel(row, col);
+					TileView tileView = tileViews[row][col];
+
+					if (gridModel.isGameOver()) {
+						if (tileModel.isRevealed()) {
+							if (tileModel.isHasBomb()) {
+								tileView.setType(55);
+							} else {
+								tileView.setType(tileModel.getNumBombsAround());
+							}
+						} else if (tileModel.isHasBomb()) {
+							tileView.setType(77);
+						}
+					} else {
+						if (tileModel.isRevealed()) {
+							tileView.setType(tileModel.getNumBombsAround());
+						} else if (tileModel.isFlagged()) {
+							// Set flagged tile image
+							tileView.setType(88);
+						} else {
+							// Set default tile image
+							tileView.setType(99);
+						}
+					}
+				}
+			}
+			gridView.repaint();
+			gridView.revalidate();
+		}
+	}
 }

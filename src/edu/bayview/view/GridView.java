@@ -61,7 +61,10 @@ public class GridView extends JPanel {
 		return this.tileViews[row][col];
 	}
 	
-	public void updateTileView(int row, int col) {
-		System.out.println("UPDATE TILE VIEW");
+	public TileView[][] getTileViews() {
+		return this.tileViews;
 	}
+//	public void updateTileView(int row, int col) {
+//		System.out.println("UPDATE TILE VIEW");
+//	}
 }

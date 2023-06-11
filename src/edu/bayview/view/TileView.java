@@ -14,7 +14,7 @@ public class TileView extends JLabel {
 	private static final String IMAGE_PATH = "src/resources/tile/";
 	private static Map<Integer, Image> imageMap = new HashMap<>();
 	private final int length;
-	private int type;
+	private int type = 99;
 
 	static {
 		for (int i = 0; i < 9; i++) {
@@ -58,7 +58,8 @@ public class TileView extends JLabel {
 	}
 	
 	private void setImage() {
-		Image image = this.imageMap.get(type);
+//		System.out.println("Update image");
+		Image image = this.imageMap.get(this.type);
 		// Scale the image to fit the label size
 		Image scaledImage = image.getScaledInstance(length, length, Image.SCALE_SMOOTH);
 		ImageIcon scaledIcon = new ImageIcon(scaledImage);

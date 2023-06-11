@@ -20,7 +20,7 @@ public class BoardView extends JFrame {
         GridModel gridModel = new GridModel(9, 9, 10);
         GridView gridView = new GridView(9, 40);
         this.add(gridView);
-        GameController gameController = new GameController(gridModel, gridView);
+        GameController gameController = new GameController(gridModel, gridView, this);
     }
 
     private void initialize() {

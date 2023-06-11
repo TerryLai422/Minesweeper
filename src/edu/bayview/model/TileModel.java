@@ -40,4 +40,10 @@ public class TileModel {
 	public void setNumBombsAround(int numBombsAround) {
 		this.numBombsAround = numBombsAround;
 	}
+
+	@Override
+	public String toString() {
+		return "" + (this.hasBomb ? "1" : "0") + "-" + (Integer.valueOf(this.numBombsAround).toString()) + "-"
+				+ (this.revealed ? "1" : "0") + "-" + (this.flagged ? "1" : "0");
+	}
 }
