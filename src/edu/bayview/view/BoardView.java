@@ -17,7 +17,7 @@ public class BoardView extends JFrame {
 	private static final String TITLE = "Minesweeper";
     private JLabel numOfFlaggedLabel;
     private JLabel timerLabel;
-    private Timer timer;
+
     public BoardView() {
         GridModel gridModel = new GridModel(9, 10);
         GridView gridView = new GridView(9);
@@ -35,29 +35,20 @@ public class BoardView extends JFrame {
         new GameController(gridModel, gridView, this);
     }
 
-    public void updateFlagged(int flagged) {
-    	numOfFlaggedLabel.setText("#:" + flagged);
+    public JLabel getFlaggedLabel() {
+    	return this.numOfFlaggedLabel;
     }
     
+    public JLabel getTimerLabel() {
+    	return this.timerLabel;
+    }
     private void initialize() {
         this.setVisible(true);
         this.setResizable(false);
         this.pack();
         this.setTitle(TITLE);
         this.setLocationRelativeTo(null);
-        // Start the timer if it hasn't started yet
-        if (timer == null) {
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                int timeElapsed = 0;
 
-                @Override
-                public void run() {
-                    timeElapsed++;
-                    timerLabel.setText("Timer: " + timeElapsed);
-                }
-            }, 0, 1000);
-        }
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {

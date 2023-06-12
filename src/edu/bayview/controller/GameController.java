@@ -2,6 +2,8 @@ package edu.bayview.controller;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -16,14 +18,30 @@ public class GameController {
 	private GridModel gridModel;
 	private GridView gridView;
 	private BoardView boardView;
-
+    private Timer timer;
 	public GameController(GridModel gridModel, GridView gridView, BoardView boardView) {
 		this.gridModel = gridModel;
 		this.gridView = gridView;
 		this.boardView = boardView;
 		setupListeners();
+		initialize();
 	}
 
+	private void initialize() {
+        // Start the timer if it hasn't started yet
+        if (timer == null) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                int timeElapsed = 0;
+
+                @Override
+                public void run() {
+                    timeElapsed++;
+                    boardView.getTimerLabel().setText("Timer: " + timeElapsed);
+                }
+            }, 0, 1000);
+        }
+	}
 	private void setupListeners() {
 		for (int row = 0; row < this.gridView.getNumOfTile(); row++) {
 			for (int col = 0; col < this.gridView.getNumOfTile(); col++) {
@@ -148,9 +166,7 @@ public class GameController {
 					}
 				}
 			}
-			System.out.println("#covered" + gridModel.getNumOfCovered());
-			System.out.println("#flagged" + gridModel.getNumOfFlagged());
-			boardView.updateFlagged(gridModel.getNumOfFlagged());
+			boardView.getFlaggedLabel().setText("#:" + gridModel.getNumOfFlagged());
 			boardView.repaint();
 			gridView.repaint();
 			gridView.revalidate();
