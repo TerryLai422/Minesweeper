@@ -18,30 +18,51 @@ public class GameController {
 	private GridModel gridModel;
 	private GridView gridView;
 	private BoardView boardView;
-    private Timer timer;
+	private Timer timer;
+
 	public GameController(GridModel gridModel, GridView gridView, BoardView boardView) {
 		this.gridModel = gridModel;
 		this.gridView = gridView;
 		this.boardView = boardView;
-		setupListeners();
 		initialize();
 	}
 
-	private void initialize() {
-        // Start the timer if it hasn't started yet
-        if (timer == null) {
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                int timeElapsed = 0;
-
-                @Override
-                public void run() {
-                    timeElapsed++;
-                    boardView.getTimerLabel().setText("Timer: " + timeElapsed);
-                }
-            }, 0, 1000);
-        }
+	public void resize(int size) {
+		int numOfMines;
+		switch (size) {
+		case 24:
+			numOfMines = 99;
+			break;
+		case 16:
+			numOfMines = 40;
+			break;
+		default:
+			numOfMines = 10;
+		}
+//		this.gridView.initialize(size);
+//		this.gridModel.initialize(size, numOfMines);
+//		initialize();
+//		boardView.repaint();
+//		gridView.repaint();
 	}
+
+	private void initialize() {
+		setupListeners();
+		// Start the timer if it hasn't started yet
+		if (timer == null) {
+			timer = new Timer();
+			timer.schedule(new TimerTask() {
+				int timeElapsed = 0;
+
+				@Override
+				public void run() {
+					timeElapsed++;
+					boardView.getTimerLabel().setText("Timer: " + timeElapsed);
+				}
+			}, 0, 1000);
+		}
+	}
+
 	private void setupListeners() {
 		for (int row = 0; row < this.gridView.getNumOfTile(); row++) {
 			for (int col = 0; col < this.gridView.getNumOfTile(); col++) {

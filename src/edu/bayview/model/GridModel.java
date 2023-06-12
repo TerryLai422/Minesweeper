@@ -14,7 +14,7 @@ public class GridModel {
 		initialize(numOfTile, numOfMines);
 	}
 
-	private void initialize(int numOfTile, int numOfMines) {
+	public void initialize(int numOfTile, int numOfMines) {
 		this.numOfTile = numOfTile;
 		this.numOfMines = numOfMines;
 		this.numOfFlagged = numOfMines;

@@ -17,7 +17,7 @@ public class GridView extends JPanel {
 		initialize(numOfTile);
 	}
 
-	private void initialize(int numOfTile) {
+	public void initialize(int numOfTile) {
 		this.numOfTile = numOfTile;
 		this.tileViews = new TileView[numOfTile][numOfTile];
 		this.setLayout(new GridLayout(numOfTile, numOfTile));
@@ -47,10 +47,6 @@ public class GridView extends JPanel {
 
 	public int getNumOfTile() {
 		return this.numOfTile;
-	}
-
-	public void setNumOfTile(int numOfTile) {
-		this.numOfTile = numOfTile;
 	}
 	
 	public TileView getTileView(int row, int col) {
