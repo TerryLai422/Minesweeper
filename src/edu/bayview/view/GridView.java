@@ -8,20 +8,18 @@ import java.awt.Color;
 import java.awt.GridLayout;
 
 public class GridView extends JPanel {
-
 	private static final long serialVersionUID = 1L;
 	private int numOfTile;
-	private final int tileLength;
+	private final int tileLength = 50;
 	private TileView[][] tileViews;
 
-	public GridView(int numOfTile, int tileLength) {
-		this.numOfTile = numOfTile;
-		this.tileLength = tileLength;
-		this.tileViews = new TileView[numOfTile][numOfTile];
-		initialize();
+	public GridView(int numOfTile) {
+		initialize(numOfTile);
 	}
 
-	private void initialize() {
+	private void initialize(int numOfTile) {
+		this.numOfTile = numOfTile;
+		this.tileViews = new TileView[numOfTile][numOfTile];
 		this.setLayout(new GridLayout(numOfTile, numOfTile));
 		set3DBorder();
 		setupTileViews();
@@ -29,10 +27,8 @@ public class GridView extends JPanel {
 
 	private void set3DBorder() {
 		int borderWidth = 10; // Set the desired border width
-
 		Border outerBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED, Color.DARK_GRAY, Color.GRAY);
 		Border innerBorder = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
-
 		Border compoundBorder = BorderFactory.createCompoundBorder(outerBorder, innerBorder);
 		Border borderedBorder = BorderFactory.createCompoundBorder(compoundBorder,
 				BorderFactory.createEmptyBorder(borderWidth, borderWidth, borderWidth, borderWidth));
@@ -42,7 +38,7 @@ public class GridView extends JPanel {
 	private void setupTileViews() {
 		for (int row = 0; row < numOfTile; row++) {
 			for (int col = 0; col < numOfTile; col++) {
-				TileView tileView = new TileView(tileLength, 99, row, col);
+				TileView tileView = new TileView(tileLength, 99);
 				this.tileViews[row][col] = tileView;
 				this.add(tileView);
 			}
@@ -64,7 +60,4 @@ public class GridView extends JPanel {
 	public TileView[][] getTileViews() {
 		return this.tileViews;
 	}
-//	public void updateTileView(int row, int col) {
-//		System.out.println("UPDATE TILE VIEW");
-//	}
 }

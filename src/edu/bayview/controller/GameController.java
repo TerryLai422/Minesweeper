@@ -21,7 +21,6 @@ public class GameController {
 		this.gridModel = gridModel;
 		this.gridView = gridView;
 		this.boardView = boardView;
-
 		setupListeners();
 	}
 
@@ -46,22 +45,16 @@ public class GameController {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (!gridModel.isGameOver()) {
-				System.out.println("Click - row:" + row + ",col:" + col);
-				System.out.println("Before Tile:" + gridModel.getTileModel(row, col).toString());
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					// Left button clicked
 					if (!gridModel.isTileFlagged(row, col)) {
 						revealTile(row, col);
-					} else {
-						System.out.println("row[" + row + "],col[" + col + "] is flagged");
 					}
 				} else if (e.getButton() == MouseEvent.BUTTON3) {
 					// Right button clicked
 					flagTile(row, col);
 				}
 				updateTileViews();
-
-				System.out.println("After Tile:" + gridModel.getTileModel(row, col).toString());
 			} else {
 				System.out.println("GAME OVER");
 				if (JOptionPane.showConfirmDialog(boardView, "Do you want to restart the game?", "Restart Game?",
@@ -74,59 +67,59 @@ public class GameController {
 				}
 			}
 		}
+
 		private void revealTile(int row, int col) {
-		    System.out.println("revealTile");
-		    if (!gridModel.isTileRevealed(row, col)) {
-		        gridModel.setTileRevealed(row, col, true);
-		        if (gridModel.hasBomb(row, col)) {
-		            // Handle bomb revealed
-		            gridModel.setGameOver(true);
-		            System.out.println("GAME OVER!");
-		        } else {
-		            // Update neighboring tiles
-		        	// TODO AUDREY not working
-//		            revealNeighborTiles(row, col); 
-		        }
-		    }
+			System.out.println("revealTile");
+			if (!gridModel.isTileRevealed(row, col)) {
+				gridModel.setTileRevealed(row, col, true);
+				gridModel.decrementNumOfCovered();
+				if (gridModel.hasBomb(row, col)) {
+					// Handle bomb revealed
+					gridModel.setGameOver(true);
+				} else {
+					// Update neighboring tiles
+					revealNeighborTiles(row, col);
+				}
+			}
 		}
 
 		private void revealNeighborTiles(int row, int col) {
-		    for (int i = Math.max(row - 1, 0); i <= Math.min(row + 1, gridView.getNumOfTile() - 1); i++) {
-		        for (int j = Math.max(col - 1, 0); j <= Math.min(col + 1, gridView.getNumOfTile() - 1); j++) {
-		            if (i != row || j != col) {
-		                if (!gridModel.hasBomb(i, j) && !gridModel.isTileRevealed(i, j)) {
-		                    revealTile(i, j);
-		                }
-		            }
-		        }
-		    }
-		}
-		
-		private boolean isValidTile(int row, int col) {
-		    int numOfTile = gridView.getNumOfTile();
-		    return row >= 0 && row < numOfTile && col >= 0 && col < numOfTile;
-		}
+			int minRow, minCol, maxRow, maxCol;
 
+			minRow = (row <= 0 ? 0 : row - 1);
+			minCol = (col <= 0 ? 0 : col - 1);
+			maxRow = (row >= gridView.getNumOfTile() - 1 ? gridView.getNumOfTile() : row + 2);
+			maxCol = (col >= gridView.getNumOfTile() - 1 ? gridView.getNumOfTile() : col + 2);
+
+			// Loop over all surrounding cells
+			for (int i = minRow; i < maxRow; i++) {
+				for (int j = minCol; j < maxCol; j++) {
+					if (!gridModel.hasBomb(i, j) && !gridModel.isTileRevealed(i, j)) {
+						if (!gridModel.isTileFlagged(i, j)) {
+							gridModel.setTileRevealed(i, j, true);
+							gridModel.decrementNumOfCovered();
+							if (gridModel.getNumBombsAround(i, j) == 0) {
+								// Call ourself recursively
+								revealNeighborTiles(i, j);
+							}
+						}
+					}
+				}
+			}
+		}
 
 		private void flagTile(int row, int col) {
-			System.out.println("flatTile");
 			if (!gridModel.isTileRevealed(row, col)) {
 				boolean currentFlagStatus = gridModel.isTileFlagged(row, col);
+				gridModel.setNumOfFlagged(gridModel.getNumOfFlagged() + (currentFlagStatus ? 1 : -1));
 				gridModel.setTileFlagged(row, col, !currentFlagStatus);
 			}
 		}
 
 		private void updateTileViews() {
-			System.out.println("update tile views");
-
 			TileView[][] tileViews = gridView.getTileViews();
 			int numOfTile = gridView.getNumOfTile();
-			for (int row = 0; row < numOfTile; row++) {
-				for (int col = 0; col < numOfTile; col++) {
-					System.out.print(gridModel.getTileModels()[row][col].toString() + "|");
-				}
-				System.out.println("");
-			}
+
 			for (int row = 0; row < numOfTile; row++) {
 				for (int col = 0; col < numOfTile; col++) {
 					TileModel tileModel = gridModel.getTileModel(row, col);
@@ -155,6 +148,10 @@ public class GameController {
 					}
 				}
 			}
+			System.out.println("#covered" + gridModel.getNumOfCovered());
+			System.out.println("#flagged" + gridModel.getNumOfFlagged());
+			boardView.updateFlagged(gridModel.getNumOfFlagged());
+			boardView.repaint();
 			gridView.repaint();
 			gridView.revalidate();
 		}

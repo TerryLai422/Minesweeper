@@ -4,22 +4,24 @@ import java.util.Random;
 
 public class GridModel {
 	private TileModel[][] tileModels;
-	private int rows;
-	private int columns;
-	private int numMines;
+	private int numOfTile;
+	private int numOfMines;
+	private int numOfCovered;
+	private int numOfFlagged;
 	private boolean gameOver = false;
 
-	public GridModel(int rows, int columns, int numMines) {
-		this.rows = rows;
-		this.columns = columns;
-		this.numMines = numMines;
-		tileModels = new TileModel[rows][columns];
-		initialize();
+	public GridModel(int numOfTile, int numOfMines) {
+		initialize(numOfTile, numOfMines);
 	}
 
-	private void initialize() {
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < columns; col++) {
+	private void initialize(int numOfTile, int numOfMines) {
+		this.numOfTile = numOfTile;
+		this.numOfMines = numOfMines;
+		this.numOfFlagged = numOfMines;
+		this.numOfCovered = numOfTile * numOfTile;
+		tileModels = new TileModel[numOfTile][numOfTile];
+		for (int row = 0; row < numOfTile; row++) {
+			for (int col = 0; col < numOfTile; col++) {
 				tileModels[row][col] = new TileModel();
 			}
 		}
@@ -28,8 +30,9 @@ public class GridModel {
 
 	public void restart() {
 		this.gameOver = false;
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < columns; col++) {
+		this.numOfFlagged = numOfMines;
+		for (int row = 0; row < numOfTile; row++) {
+			for (int col = 0; col < numOfTile; col++) {
 				tileModels[row][col].setRevealed(false);
 				tileModels[row][col].setFlagged(false);
 				tileModels[row][col].setHasBomb(false);
@@ -38,12 +41,13 @@ public class GridModel {
 		}
 		setupMines();
 	}
+
 	private void setupMines() {
 		Random random = new Random();
 		int count = 0;
-		while (count < numMines) {
-			int row = random.nextInt(rows);
-			int col = random.nextInt(columns);
+		while (count < numOfMines) {
+			int row = random.nextInt(numOfTile);
+			int col = random.nextInt(numOfTile);
 			if (!tileModels[row][col].isHasBomb()) {
 				tileModels[row][col].setHasBomb(true);
 				count++;
@@ -53,8 +57,8 @@ public class GridModel {
 	}
 
 	private void calculateNumBombsAround() {
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < columns; col++) {
+		for (int row = 0; row < numOfTile; row++) {
+			for (int col = 0; col < numOfTile; col++) {
 				tileModels[row][col].setNumBombsAround(countBombsAround(row, col));
 			}
 		}
@@ -74,35 +78,8 @@ public class GridModel {
 		return count;
 	}
 
-	public void revealTile(int row, int col) {
-    	System.out.println("REVEAL TILES- row:" + row + "-col:" + col);
-		if (isValidPosition(row, col)) {
-			TileModel tile = tileModels[row][col];
-			if (!tile.isRevealed()) {
-				tile.setRevealed(true);
-				if (tile.getNumBombsAround() == 0 && !tile.isHasBomb()) {
-					// If the tile has no bombs around it, recursively reveal neighboring tiles
-					revealNeighboringTiles(row, col);
-				}
-			}
-		}
-	}
-
-	private void revealNeighboringTiles(int row, int col) {
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				int newRow = row + i;
-				int newCol = col + j;
-				System.out.println("newRow:" + newRow + "-newCol:" + newCol);
-				if (isValidPosition(newRow, newCol)) {
-					revealTile(newRow, newCol);
-				}
-			}
-		}
-	}
-
 	private boolean isValidPosition(int row, int col) {
-		return row >= 0 && row < rows && col >= 0 && col < columns;
+		return row >= 0 && row < numOfTile && col >= 0 && col < numOfTile;
 	}
 
 	public boolean hasBomb(int row, int col) {
@@ -136,11 +113,28 @@ public class GridModel {
 	public TileModel[][] getTileModels() {
 		return tileModels;
 	}
+
 	public boolean isGameOver() {
 		return this.gameOver;
 	}
 
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
+	}
+
+	public int getNumOfCovered() {
+		return this.numOfCovered;
+	}
+
+	public void decrementNumOfCovered() {
+		this.numOfCovered--;
+	}
+
+	public int getNumOfFlagged() {
+		return this.numOfFlagged;
+	}
+
+	public void setNumOfFlagged(int numOfFlagged) {
+	 this.numOfFlagged = numOfFlagged;
 	}
 }

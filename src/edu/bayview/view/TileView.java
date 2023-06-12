@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class TileView extends JLabel {
-
 	private static final long serialVersionUID = 1L;
 	private static final String IMAGE_PATH = "src/resources/tile/";
 	private static Map<Integer, Image> imageMap = new HashMap<>();
@@ -39,7 +38,7 @@ public class TileView extends JLabel {
 		imageMap.put(99, image99);
 	}
 
-	public TileView(int length, int type, int x, int y) {
+	public TileView(int length, int type) {
 		this.length = length;
 		this.type = type;
 		initialize();
@@ -58,8 +57,7 @@ public class TileView extends JLabel {
 	}
 	
 	private void setImage() {
-//		System.out.println("Update image");
-		Image image = this.imageMap.get(this.type);
+		Image image = imageMap.get(this.type);
 		// Scale the image to fit the label size
 		Image scaledImage = image.getScaledInstance(length, length, Image.SCALE_SMOOTH);
 		ImageIcon scaledIcon = new ImageIcon(scaledImage);
