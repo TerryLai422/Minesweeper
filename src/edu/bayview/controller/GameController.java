@@ -19,11 +19,13 @@ public class GameController {
 	private GridView gridView;
 	private BoardView boardView;
 	private Timer timer;
+	private TimerTask timerTask;
 
-	public GameController(GridModel gridModel, GridView gridView, BoardView boardView) {
-		this.gridModel = gridModel;
+	public GameController(int size, int numOfMines, GridView gridView, BoardView boardView) {
+		this.gridModel = new GridModel(size, numOfMines);
 		this.gridView = gridView;
 		this.boardView = boardView;
+		this.boardView.setNumOfFlagged("# " + numOfMines);
 		initialize();
 	}
 
@@ -39,19 +41,25 @@ public class GameController {
 		default:
 			numOfMines = 10;
 		}
-//		this.gridView.initialize(size);
-//		this.gridModel.initialize(size, numOfMines);
-//		initialize();
-//		boardView.repaint();
-//		gridView.repaint();
+		this.gridView.initialize(size);
+		this.gridModel.initialize(size, numOfMines);
+		this.boardView.setNumOfFlagged("# " + numOfMines);
+		initialize();
+		boardView.pack();
+		boardView.repaint();
+		gridView.repaint();
 	}
 
 	private void initialize() {
 		setupListeners();
+
+	}
+
+	private void startTimer() {
 		// Start the timer if it hasn't started yet
 		if (timer == null) {
 			timer = new Timer();
-			timer.schedule(new TimerTask() {
+			timerTask = new TimerTask() {
 				int timeElapsed = 0;
 
 				@Override
@@ -59,10 +67,11 @@ public class GameController {
 					timeElapsed++;
 					boardView.getTimerLabel().setText("Timer: " + timeElapsed);
 				}
-			}, 0, 1000);
+			};
+			timer.schedule(timerTask, 0, 1000);
 		}
 	}
-
+	
 	private void setupListeners() {
 		for (int row = 0; row < this.gridView.getNumOfTile(); row++) {
 			for (int col = 0; col < this.gridView.getNumOfTile(); col++) {
@@ -83,32 +92,46 @@ public class GameController {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (!gridModel.isGameOver()) {
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					// Left button clicked
-					if (!gridModel.isTileFlagged(row, col)) {
-						revealTile(row, col);
+			if (gridModel.isGameStarted()) {
+				if (!gridModel.isGameOver()) {
+					if (e.getButton() == MouseEvent.BUTTON1) {
+						// Left button clicked
+						if (!gridModel.isTileFlagged(row, col)) {
+							revealTile(row, col);
+						}
+					} else if (e.getButton() == MouseEvent.BUTTON3) {
+						// Right button clicked
+						flagTile(row, col);
 					}
-				} else if (e.getButton() == MouseEvent.BUTTON3) {
-					// Right button clicked
-					flagTile(row, col);
-				}
-				updateTileViews();
-			} else {
-				System.out.println("GAME OVER");
-				if (JOptionPane.showConfirmDialog(boardView, "Do you want to restart the game?", "Restart Game?",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-					System.out.println("Restart Game");
-					gridModel.restart();
 					updateTileViews();
 				} else {
-					boardView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					promptToRestart();
+				}
+			} else {
+				if (gridModel.isGameOver()) {
+					promptToRestart();
+				} else {
+				startTimer();
+				gridModel.setGameStarted(true);
+				gridModel.setupMines(row, col);
+				revealTile(row, col);
+				updateTileViews();
 				}
 			}
 		}
 
+		private void promptToRestart() {
+			if (JOptionPane.showConfirmDialog(boardView, "Do you want to restart the game?", "Restart Game?",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+				System.out.println("Restart Game");
+				gridModel.restart();
+				boardView.getTimerLabel().setText("Timer: " + 0);
+				updateTileViews();
+			} else {
+				boardView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			}
+		}
 		private void revealTile(int row, int col) {
-			System.out.println("revealTile");
 			if (!gridModel.isTileRevealed(row, col)) {
 				gridModel.setTileRevealed(row, col, true);
 				gridModel.decrementNumOfCovered();
@@ -187,7 +210,15 @@ public class GameController {
 					}
 				}
 			}
-			boardView.getFlaggedLabel().setText("#:" + gridModel.getNumOfFlagged());
+
+			boardView.setNumOfFlagged("#:" + gridModel.getNumOfFlagged());
+			if (gridModel.isGameStarted() &&
+					gridModel.getNumOfCovered() == gridModel.getNumOfMines()) {
+				timerTask.cancel();
+				JOptionPane.showMessageDialog(boardView, "You won!", "Button Dialog", JOptionPane.INFORMATION_MESSAGE);
+				gridModel.setGameStarted(false);
+				gridModel.setGameOver(true);
+			}
 			boardView.repaint();
 			gridView.repaint();
 			gridView.revalidate();

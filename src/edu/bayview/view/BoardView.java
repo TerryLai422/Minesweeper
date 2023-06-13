@@ -22,6 +22,7 @@ public class BoardView extends JFrame {
     private JLabel numOfFlaggedLabel;
     private JLabel timerLabel;
     private GameController gameController;
+    private GridView gridView;
     
     public BoardView() {
         // Create the menu bar
@@ -63,42 +64,7 @@ public class BoardView extends JFrame {
         optionsMenu.add(gridSize24);
         menuBar.add(optionsMenu);
         setJMenuBar(menuBar);
-        this.setLayout(new BorderLayout());
         
-        GridModel gridModel = new GridModel(9, 10);
-        GridView gridView = new GridView(9);
-        
-        // Create the bottom panel
-        JPanel bottomPanel = new JPanel();
-        numOfFlaggedLabel = new JLabel("#: " + gridModel.getNumOfFlagged());
-        timerLabel = new JLabel("Timer: 0");
-        bottomPanel.add(numOfFlaggedLabel);
-        bottomPanel.add(timerLabel);
-        this.add(bottomPanel, BorderLayout.SOUTH);
-        this.add(gridView, BorderLayout.CENTER);
-    	initialize();
-        this.gameController = new GameController(gridModel, gridView, this);
-    }
-    private void setGridSize(int size) {
-        // Update the grid size and reset the game
-        // Replace with your code to handle grid size change
-    	System.out.println("SIZE: " + size);
-    	this.gameController.resize(size);
-    }
-    public JLabel getFlaggedLabel() {
-    	return this.numOfFlaggedLabel;
-    }
-    
-    public JLabel getTimerLabel() {
-    	return this.timerLabel;
-    }
-    private void initialize() {
-        this.setVisible(true);
-        this.setResizable(false);
-        this.pack();
-        this.setTitle(TITLE);
-        this.setLocationRelativeTo(null);
-
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -113,5 +79,45 @@ public class BoardView extends JFrame {
                 }
             }
         });
+        
+        this.setLayout(new BorderLayout());
+    	initialize(9, 10);
+     
+    }
+    private void setGridSize(int size) {
+        // Update the grid size and reset the game
+        // Replace with your code to handle grid size change
+    	System.out.println("SIZE: " + size);
+    	this.gameController.resize(size);
+    }
+    
+    public JLabel getTimerLabel() {
+    	return this.timerLabel;
+    }
+    
+    public void setNumOfFlagged(String numOfFlagged) {
+    	this.numOfFlaggedLabel.setText(numOfFlagged);
+    }
+    
+    public void initialize(int size, int numOfMines) {
+        gridView = new GridView(size);
+        
+        // Create the bottom panel
+        JPanel bottomPanel = new JPanel();
+        numOfFlaggedLabel = new JLabel();
+        timerLabel = new JLabel("Timer: 0");
+        bottomPanel.add(numOfFlaggedLabel);
+        bottomPanel.add(timerLabel);
+        this.add(bottomPanel, BorderLayout.SOUTH);
+        this.add(gridView, BorderLayout.CENTER);
+        this.gameController = new GameController(size, numOfMines, gridView, this);
+        
+        this.setTitle(TITLE);
+        this.setVisible(true);
+        this.setResizable(false);
+        this.pack();
+        this.setLocationRelativeTo(null);
+
+
     }
 }

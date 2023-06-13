@@ -8,13 +8,16 @@ public class GridModel {
 	private int numOfMines;
 	private int numOfCovered;
 	private int numOfFlagged;
-	private boolean gameOver = false;
+	private boolean gameOver;
+	private boolean gameStarted;
 
 	public GridModel(int numOfTile, int numOfMines) {
 		initialize(numOfTile, numOfMines);
 	}
 
 	public void initialize(int numOfTile, int numOfMines) {
+		this.gameStarted = false;
+		this.gameOver = false;
 		this.numOfTile = numOfTile;
 		this.numOfMines = numOfMines;
 		this.numOfFlagged = numOfMines;
@@ -25,12 +28,13 @@ public class GridModel {
 				tileModels[row][col] = new TileModel();
 			}
 		}
-		setupMines();
 	}
 
 	public void restart() {
+		this.gameStarted = false;
 		this.gameOver = false;
 		this.numOfFlagged = numOfMines;
+		this.numOfCovered = numOfTile * numOfTile;
 		for (int row = 0; row < numOfTile; row++) {
 			for (int col = 0; col < numOfTile; col++) {
 				tileModels[row][col].setRevealed(false);
@@ -39,18 +43,21 @@ public class GridModel {
 				tileModels[row][col].setNumBombsAround(0);
 			}
 		}
-		setupMines();
 	}
 
-	private void setupMines() {
+	public void setupMines(int x, int y) {
 		Random random = new Random();
 		int count = 0;
 		while (count < numOfMines) {
 			int row = random.nextInt(numOfTile);
 			int col = random.nextInt(numOfTile);
-			if (!tileModels[row][col].isHasBomb()) {
-				tileModels[row][col].setHasBomb(true);
-				count++;
+			if (x == row && y == col) {
+
+			} else {
+				if (!tileModels[row][col].isHasBomb()) {
+					tileModels[row][col].setHasBomb(true);
+					count++;
+				}
 			}
 		}
 		calculateNumBombsAround();
@@ -110,6 +117,14 @@ public class GridModel {
 		return this.tileModels[row][col];
 	}
 
+	public void setGameStarted(boolean gameStarted) {
+		this.gameStarted = gameStarted;
+	}
+
+	public boolean isGameStarted() {
+		return this.gameStarted;
+	}
+
 	public TileModel[][] getTileModels() {
 		return tileModels;
 	}
@@ -122,6 +137,10 @@ public class GridModel {
 		this.gameOver = gameOver;
 	}
 
+	public int getNumOfMines() {
+		return this.numOfMines;
+	}
+	
 	public int getNumOfCovered() {
 		return this.numOfCovered;
 	}
@@ -134,7 +153,11 @@ public class GridModel {
 		return this.numOfFlagged;
 	}
 
+	public void setNumOfCovered(int numOfCovered) {
+		this.numOfCovered = numOfCovered;
+	} 
+	
 	public void setNumOfFlagged(int numOfFlagged) {
-	 this.numOfFlagged = numOfFlagged;
+		this.numOfFlagged = numOfFlagged;
 	}
 }

@@ -10,7 +10,7 @@ import java.awt.GridLayout;
 public class GridView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private int numOfTile;
-	private final int tileLength = 50;
+	private final int tileLength = 30;
 	private TileView[][] tileViews;
 
 	public GridView(int numOfTile) {
@@ -18,6 +18,7 @@ public class GridView extends JPanel {
 	}
 
 	public void initialize(int numOfTile) {
+		this.removeAll();
 		this.numOfTile = numOfTile;
 		this.tileViews = new TileView[numOfTile][numOfTile];
 		this.setLayout(new GridLayout(numOfTile, numOfTile));
