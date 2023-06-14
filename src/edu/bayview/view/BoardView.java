@@ -32,6 +32,9 @@ public class BoardView extends JFrame {
 	private JLabel timerLabel;
 	private JPanel timerPanel;
 	private JPanel minePanel;
+	private JLabel label01;
+	private JLabel label02;
+	private JLabel label03;
 	private JPanel middlePanel;
 	private GameController gameController;
 	private GridView gridView;
@@ -117,9 +120,12 @@ public class BoardView extends JFrame {
 
 	public void setNumOfFlagged(String numOfFlagged) {
 //		this.numOfFlaggedLabel.setText(numOfFlagged);
-		minePanel.removeAll();
+//		minePanel.removeAll();
 //		minePanel.add(this.numberImageMap.get(1));
-		
+		label01.setIcon(numberImageMap.get(1));
+		label02.setIcon(numberImageMap.get(1));
+		label03.setIcon(numberImageMap.get(1));
+		repaint();
 	}
 
 	public void initialize(int size, int numOfMines) {
@@ -137,13 +143,13 @@ public class BoardView extends JFrame {
 //		Image scaledImage0 = image0.getScaledInstance(30, 50, Image.SCALE_SMOOTH);
 		ImageIcon scaledIcon0 = numberImageMap.get(0);
 		// Create JLabels for each image and set the images as their icons
-		JLabel label01 = new JLabel();
+		label01 = new JLabel();
 		label01.setIcon(scaledIcon0);
 
-		JLabel label02 = new JLabel();
+		label02 = new JLabel();
 		label02.setIcon(scaledIcon0);
 
-		JLabel label03 = new JLabel();
+		label03 = new JLabel();
 		label03.setIcon(scaledIcon0);
 
 //		Image image1 = numberImageMap.get(1);
