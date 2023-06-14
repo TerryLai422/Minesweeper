@@ -1,10 +1,14 @@
 package edu.bayview.controller;
 
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -65,6 +69,8 @@ public class GameController {
 				@Override
 				public void run() {
 					timeElapsed++;
+					int num = 1000 + timeElapsed;
+//					boardView.getTimerLabel().setIcon(icon);
 					boardView.getTimerLabel().setText("Timer: " + timeElapsed);
 				}
 			};

@@ -13,6 +13,7 @@ public class GridView extends JPanel {
 	private final int tileLength = 30;
 	private TileView[][] tileViews;
 
+	
 	public GridView(int numOfTile) {
 		initialize(numOfTile);
 	}
