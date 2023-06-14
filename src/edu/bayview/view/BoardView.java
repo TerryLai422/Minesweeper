@@ -26,12 +26,13 @@ public class BoardView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private static final String TITLE = "Minesweeper";
 	private static final String NUMBER_IMAGE_PATH = "src/resources/number/";
-	private static Map<Integer, Image> numberImageMap = new HashMap<>();
+	private static Map<Integer, ImageIcon> numberImageMap = new HashMap<>();
 
-	private JLabel numOfFlaggedLabel;
+//	private JLabel numOfFlaggedLabel;
 	private JLabel timerLabel;
 	private JPanel timerPanel;
 	private JPanel minePanel;
+	private JPanel middlePanel;
 	private GameController gameController;
 	private GridView gridView;
 
@@ -39,7 +40,9 @@ public class BoardView extends JFrame {
 		for (int i = 0; i < 9; i++) {
 			ImageIcon imageIcon = new ImageIcon(NUMBER_IMAGE_PATH + i + ".png");
 			Image image = imageIcon.getImage();
-			numberImageMap.put(i, image);
+			Image scaledImage = image.getScaledInstance(30, 50, Image.SCALE_SMOOTH);
+			ImageIcon scaledIcon = new ImageIcon(scaledImage);
+			numberImageMap.put(i, scaledIcon);
 		}
 	}
 
@@ -113,7 +116,10 @@ public class BoardView extends JFrame {
 	}
 
 	public void setNumOfFlagged(String numOfFlagged) {
-		this.numOfFlaggedLabel.setText(numOfFlagged);
+//		this.numOfFlaggedLabel.setText(numOfFlagged);
+		minePanel.removeAll();
+//		minePanel.add(this.numberImageMap.get(1));
+		
 	}
 
 	public void initialize(int size, int numOfMines) {
@@ -127,9 +133,9 @@ public class BoardView extends JFrame {
 		minePanel.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		// Load the images
-		Image image0 = numberImageMap.get(0);
-		Image scaledImage0 = image0.getScaledInstance(30, 50, Image.SCALE_SMOOTH);
-		ImageIcon scaledIcon0 = new ImageIcon(scaledImage0);
+//		Image image0 = numberImageMap.get(0);
+//		Image scaledImage0 = image0.getScaledInstance(30, 50, Image.SCALE_SMOOTH);
+		ImageIcon scaledIcon0 = numberImageMap.get(0);
 		// Create JLabels for each image and set the images as their icons
 		JLabel label01 = new JLabel();
 		label01.setIcon(scaledIcon0);
@@ -140,9 +146,9 @@ public class BoardView extends JFrame {
 		JLabel label03 = new JLabel();
 		label03.setIcon(scaledIcon0);
 
-		Image image1 = numberImageMap.get(1);
-		Image scaledImage1 = image1.getScaledInstance(30, 50, Image.SCALE_SMOOTH);
-		ImageIcon scaledIcon1 = new ImageIcon(scaledImage1);
+//		Image image1 = numberImageMap.get(1);
+//		Image scaledImage1 = image1.getScaledInstance(30, 50, Image.SCALE_SMOOTH);
+		ImageIcon scaledIcon1 = numberImageMap.get(1);
 		// Create JLabels for each image and set the images as their icons
 		JLabel label11 = new JLabel();
 		label11.setIcon(scaledIcon1);
@@ -160,8 +166,8 @@ public class BoardView extends JFrame {
 		minePanel.add(label11);
 		minePanel.add(label12);
 		
-		numOfFlaggedLabel = new JLabel();
-		timerLabel = new JLabel("Timer: 0");
+//		numOfFlaggedLabel = new JLabel();
+//		timerLabel = new JLabel("Timer: 0");
 
 		// Align the left label to the left
 		constraints.gridx = 0;
